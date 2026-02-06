@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egov.main.dao.EgovMainMapper">
+	<select id="selectTblUser" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		select * from tbl_user where user_id = 1 
+	</select>
+	
+	<select id="selectLogin" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		select * from tbl_user where user_id = #{id} 
+	</select>
+</mapper>
