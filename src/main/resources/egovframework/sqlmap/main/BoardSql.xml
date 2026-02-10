@@ -11,14 +11,31 @@
 	<select id="boardView" parameterType="java.util.HashMap"
 		resultType="java.util.HashMap" statementType="CALLABLE">
 	 <![CDATA[
-		call prc_test2(#{board_id}, #{status});
+		call prc_test2(#{boardid}, #{status});
 		 ]]>
 	</select>
 
-	<select id="showBaord" parameterType="hashmap"
+	<!-- <select id="showBaord" parameterType="hashmap"
 		resultType="hashmap">
 	 <![CDATA[		
 		select * from tbl_board
+		 ]]>
+	</select> -->
+
+<!-- 	<select id="showBaord" parameterType="hashmap"
+		resultType="hashmap">
+	 <![CDATA[		
+		select * 
+		from tbl_board
+		order by boardid asc
+		limit #{pi_offset}, #{pi_recordCountPage}
+		 ]]>
+	</select> -->
+
+	<select id="showBaord" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap" statementType="CALLABLE">
+	 <![CDATA[		
+		call prc_boardList(#{pi_offset}, #{pi_recordCountPage}, #{out_listcount,mode=OUT,jdbcType=INTEGER,javaType=INTEGER}, #{status,mode=OUT,jdbcType=INTEGER,javaType=INTEGER});		
 		 ]]>
 	</select>
 

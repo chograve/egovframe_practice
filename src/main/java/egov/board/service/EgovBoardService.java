@@ -15,6 +15,8 @@ public interface EgovBoardService {
 
   public List<HashMap<String, Object>> showBaord(HttpServletRequest request) throws Exception;
 
+  public String checkReply(HttpServletRequest request) throws Exception;
+
 
 
 }

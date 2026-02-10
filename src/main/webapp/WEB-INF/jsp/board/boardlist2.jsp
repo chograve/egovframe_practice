@@ -2,6 +2,8 @@
     pageEncoding="UTF-8"%>
 <!--jstl 태그라이브러리 추가.-->
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<!--전자정부 라이브러리 추가.-->
+<%@ taglib prefix="ui" uri="http://egovframework.gov/ctl/ui"%>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>

@@ -10,12 +10,11 @@ import org.springframework.stereotype.Service;
 import com.lib.model.UserVO;
 import egov.main.dao.EgovMainMapper;
 import egov.main.service.EgovMainService;
-import egovframework.example.sample.service.impl.EgovSampleServiceImpl;
 
 @Service("mainService")
 public class EgovMainServiceImpl extends EgovAbstractServiceImpl implements EgovMainService {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(EgovSampleServiceImpl.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(EgovMainServiceImpl.class);
 
   @Resource(name = "mainMapper")
   EgovMainMapper egovMainMapper;

@@ -1,12 +1,24 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="ui" uri="http://egovframework.gov/ctl/ui"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+
 <%@ include file="../common/common.jsp"%>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>리스트</title>
+
+<script type="text/javascript">
+// 페이지 이동 함수
+function movePage(page){
+	location.href="<%=request.getContextPath()%>/boardList.do?pageNo=" + page
+} 
+</script>
+
 </head>
 <body>
 	<table border="1">
@@ -27,6 +39,11 @@
 				<td>${board["seecount"]}</td>
 			</tr>
 		</c:forEach>
+		<tr>
+			<td colspan="5" style="text-align: center;"><ui:pagination
+					paginationInfo="${paginationInfo}" type="image"
+					jsFunction="movePage" /></td>
+		</tr>
 	</table>
 
 </body>

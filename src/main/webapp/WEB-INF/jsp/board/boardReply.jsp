@@ -41,7 +41,8 @@
 </head>
 <body>
 <!-- 자신의 입맞에 맞게 게시판유형도 적어주시면 좋습니다. 예)커뮤니티,공유게시판..-->
-    <form action="boardInsert.do" method="post">
+    <form action="boardReplyReq.do" method="post">    
+    <input type="hidden" value="${boardid}" name="origin_boardid" id="origin_boardid">    
     <table class="mytable">
         <tr>
             <td class="td1">제목</td>
@@ -54,7 +55,7 @@
         </tr>
         <tr>
             <td colspan="2" class="td4">
-                <input type="submit" value="제출">
+                <input type="submit" value="답변">
                <a href="boardList.do"><input type="button" value="목록보기"></a>
             </td>
         </tr>
