@@ -7,10 +7,9 @@
 <title>Insert title here</title>
 </head>
 <body>
-<p>main</p>
-<p>${id}</p>
-<p>${pw}</p>
-<p>${uservo.user_id}</p>
-<p>${uservo.user_pw}</p>
+	<div>작성자:${userid}</div>
+	<div>제목:${title}</div>
+	<div>내용:<textarea readonly>${boardcontents}</textarea></div>
+	<a href="/boardList.do"><div>목록보기</div></a>
 </body>
 </html>
