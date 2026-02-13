@@ -9,18 +9,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>리스트</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 <script type="text/javascript">
 // 페이지 이동 함수
 function movePage(page){
 	location.href="<%=request.getContextPath()%>/boardList.do?pageNo=" + page
-} 
+}
+
+$(document).ready(function(){
+    $("#mybutton").click(function(){    
+    	location.href="<%=request.getContextPath()%>/boardWrite.do"
+    });
+});
+
 </script>
 
 </head>
 <body>
+	
 	<table border="1">
 		<tr>
 			<td>아이디</td>
@@ -31,9 +40,13 @@ function movePage(page){
 		</tr>
 		<c:forEach var="board" items="${list}">
 			<tr>
-				<td>${board.boardid}</td>
-				<td style="width: 200px"><a
-					href="boardView.do?board_id=${board.boardid}">${board.title}</a></td>
+				<td>${board.boardid}</td>				
+				<td style="width: 200px">
+					<a href="boardView.do?board_id=${board.boardid}">
+						<c:forEach begin="1" end="${board.group_tab}" step="1">RE:</c:forEach>
+						${board.title}
+					</a>				
+				</td>
 				<td style="width: 200px">${board.writetime}</td>
 				<td>${board.userid}</td>
 				<td>${board["seecount"]}</td>
@@ -44,7 +57,16 @@ function movePage(page){
 					paginationInfo="${paginationInfo}" type="image"
 					jsFunction="movePage" /></td>
 		</tr>
+		<tr>
+			<td colspan="5" style="text-align: center;">
+				<input type="button" value="글쓰기" id="mybutton" name="mybutton"/>
+			</td>
+		</tr>		
 	</table>
+	<div>
+		
+	</div>
+	
 
 </body>
 <style>
@@ -58,7 +80,7 @@ table {
 th, td {
 	width: 100px;
 	height: 50px;
-	text-align: center;
+	text-align: left;
 	border: 1px solid #000;
 	vertical-align: top; /* 위 */
 	vertical-align: bottom; /* 아래 */

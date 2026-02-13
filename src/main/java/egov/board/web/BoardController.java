@@ -58,12 +58,12 @@ public class BoardController {
         return "error/error";
       }
     }
-    return "board/boardWrite";
+    return "board/boarList";
   }
 
   @RequestMapping(value = "/boardView.do")
   public String boardView(HttpServletRequest request, ModelMap model) {
-    LOGGER.info("boardInsert.do");
+    LOGGER.info("boardView.do");
     HashMap<String, Object> resultMap = new HashMap<String, Object>();
 
     try {
@@ -92,19 +92,20 @@ public class BoardController {
 
 
     HttpSession session = request.getSession();
-
     UserVO uservo = (UserVO) session.getAttribute("uservo");
-
     String user_id = uservo.getUser_id();
 
+    ArrayList<HashMap<String, Object>> mylist = new ArrayList<HashMap<String, Object>>();
+    mylist.add(resultMap);
     model.addAttribute("loginid", user_id);
-    model.addAllAttributes(resultMap);
+    // model.addAllAttributes(resultMap);
+    model.addAttribute("list", mylist);
     return "board/boardView";
   }
 
   @RequestMapping(value = "/boardList.do")
   public String boardList(HttpServletRequest request, ModelMap model) {
-    LOGGER.info("boardInsert.do");
+    LOGGER.info("boardList.do");
 
     List<HashMap<String, Object>> resultList = new ArrayList<>();
 
@@ -135,7 +136,7 @@ public class BoardController {
 
   @RequestMapping(value = "/boardReply.do")
   public String boardReply(HttpServletRequest request, ModelMap model) {
-    LOGGER.info("boardWrite.do");
+    LOGGER.info("boardReply.do");
     String boardid = null;
     try {
       boardid = egovBoardService.checkReply(request);
@@ -152,6 +153,25 @@ public class BoardController {
 
     model.addAttribute("boardid", boardid);
     return "board/boardReply";
+  }
+
+  @RequestMapping(value = "/boardReplyReq.do")
+  public String boardReplyReq(HttpServletRequest request, ModelMap model) {
+    LOGGER.info("boardReplyReq.do");
+
+    HashMap<String, Object> resultMap = new HashMap<String, Object>();
+
+    try {
+      egovBoardService.saveReply(request);
+    } catch (Exception e) {
+      String message = e.getMessage();
+      if (message.endsWith("login error")) {
+        return "redirect:/login.do";
+      } else {
+        return "error/error";
+      }
+    }
+    return "redirect:/boardList.do";
   }
 
 }

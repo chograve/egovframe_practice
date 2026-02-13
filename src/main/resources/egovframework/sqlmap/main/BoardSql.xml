@@ -2,42 +2,77 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="egov.board.dao.EgovBoardMapper">
 
-	<insert id="boardInsert" parameterType="java.util.HashMap">
-	 <![CDATA[
-		insert into tbl_board (userid, title, boardcontents) values (#{id}, #{title}, #{content})
+	<!-- insert into tbl_board (userid, title, boardcontents) values (#{id}, 
+		#{title}, #{content}) -->
+	<insert id="boardInsert" parameterType="java.util.HashMap"
+		statementType="CALLABLE">
+	 <![CDATA[				
+		call prc_saveBoarde2(
+		#{id, mode=IN, jdbcType=VARCHAR}, 
+		#{title, mode=IN, jdbcType=VARCHAR}, 
+		#{content, mode=IN, jdbcType=LONGVARCHAR}, 
+		#{status,mode=OUT, jdbcType=INTEGER, javaType=INTEGER},
+		#{out_boardid,mode=OUT, jdbcType=INTEGER, javaType=INTEGER}
+		);  
 		 ]]>
 	</insert>
 
 	<select id="boardView" parameterType="java.util.HashMap"
 		resultType="java.util.HashMap" statementType="CALLABLE">
 	 <![CDATA[
-		call prc_test2(#{boardid}, #{status});
+		call prc_test2(
+		#{boardid}, 
+		#{status}
+		);
 		 ]]>
 	</select>
 
-	<!-- <select id="showBaord" parameterType="hashmap"
-		resultType="hashmap">
-	 <![CDATA[		
-		select * from tbl_board
-		 ]]>
-	</select> -->
+	<!-- <select id="showBaord" parameterType="hashmap" resultType="hashmap"> 
+		<![CDATA[ select * from tbl_board ]]> </select> -->
 
-<!-- 	<select id="showBaord" parameterType="hashmap"
-		resultType="hashmap">
-	 <![CDATA[		
-		select * 
-		from tbl_board
-		order by boardid asc
-		limit #{pi_offset}, #{pi_recordCountPage}
-		 ]]>
-	</select> -->
+	<!-- <select id="showBaord" parameterType="hashmap" resultType="hashmap"> 
+		<![CDATA[ select * from tbl_board order by boardid asc limit #{pi_offset}, 
+		#{pi_recordCountPage} ]]> </select> -->
 
 	<select id="showBaord" parameterType="java.util.HashMap"
 		resultType="java.util.HashMap" statementType="CALLABLE">
 	 <![CDATA[		
-		call prc_boardList(#{pi_offset}, #{pi_recordCountPage}, #{out_listcount,mode=OUT,jdbcType=INTEGER,javaType=INTEGER}, #{status,mode=OUT,jdbcType=INTEGER,javaType=INTEGER});		
+		call prc_boardList(
+		#{pi_offset}, 
+		#{pi_recordCountPage}, 
+		#{out_listcount,mode=OUT,jdbcType=INTEGER,javaType=INTEGER}, #{status,mode=OUT,jdbcType=INTEGER,javaType=INTEGER}
+		);		
 		 ]]>
 	</select>
+
+
+	<!-- 답글저장 -->
+	<select id="boardsaveReply" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap" statementType="CALLABLE">
+	 <![CDATA[		
+	 	call prc_save_req(
+	 	#{user_id, mode=IN}, 
+	 	#{title, mode=IN}, 
+	 	#{content, mode=IN},	 	
+	 	#{origin_boardid, mode=IN},	 	
+	 	#{status, mode=OUT,jdbcType=INTEGER,javaType=INTEGER}
+	 	);			
+		 ]]>
+	</select>
+	
+	<!-- 파일저장 -->
+	<insert id="saveFile" parameterType="java.util.HashMap" statementType="CALLABLE">
+	 <![CDATA[				
+		call prc_saveFile2(
+		#{user_id, mode=IN, jdbcType=VARCHAR}, 
+		#{filename, mode=IN, jdbcType=VARCHAR}, 
+		#{filetype, mode=IN, jdbcType=VARCHAR}, 
+		#{fileurl, mode=IN, jdbcType=LONGVARCHAR},		
+		#{boardid, mode=IN, jdbcType=INTEGER},
+		#{status,mode=OUT, jdbcType=INTEGER, javaType=INTEGER}
+		);  
+		 ]]>
+	</insert>
 
 
 </mapper>

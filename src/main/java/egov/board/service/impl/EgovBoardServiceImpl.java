@@ -1,8 +1,13 @@
 package egov.board.service.impl;
 
+import java.io.File;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import org.egovframe.rte.fdl.cmmn.EgovAbstractServiceImpl;
@@ -10,10 +15,13 @@ import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import com.lib.model.UserVO;
 import com.lib.util.Validation_Form;
 import egov.board.dao.EgovBoardMapper;
 import egov.board.service.EgovBoardService;
+
 
 @Service("boardService")
 public class EgovBoardServiceImpl extends EgovAbstractServiceImpl implements EgovBoardService {
@@ -22,6 +30,9 @@ public class EgovBoardServiceImpl extends EgovAbstractServiceImpl implements Ego
 
   @Resource(name = "boardMapper")
   EgovBoardMapper egovBoardMapper;
+
+  @Resource(name = "fileUploadProperty")
+  Properties properties;
 
   @Override
   public void checkUser(HttpServletRequest request) throws Exception {
@@ -54,9 +65,94 @@ public class EgovBoardServiceImpl extends EgovAbstractServiceImpl implements Ego
     paramMap.put("title", title);
     paramMap.put("content", content);
     paramMap.put("id", uservo.getUser_id());
+    paramMap.put("id", uservo.getUser_id());
+    paramMap.put("status", 0);
+    paramMap.put("out_boardid", 0);
 
     egovBoardMapper.boardInsert(paramMap);
 
+    LOGGER.info("out_boardid============" + Integer.parseInt(paramMap.get("out_boardid").toString()));
+
+    int boardid = Integer.parseInt(paramMap.get("out_boardid").toString());
+
+    // 파일저장
+    String uploadPath = properties.getProperty("file.imagePath");
+    String convertuid = "";
+    String filePath = "";
+
+    LOGGER.info("uploadPath============" + uploadPath);
+
+    LocalDateTime now = LocalDateTime.now();
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+    String formatedNow = now.format(formatter);
+
+    if (request instanceof MultipartHttpServletRequest) {
+
+      LOGGER.info("MultipartHttpServletRequest============");
+
+      final MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest) request;
+      Map<String, MultipartFile> fileMap = multipartHttpServletRequest.getFileMap();
+
+      File saveFolder = new File(uploadPath);
+      if (!saveFolder.exists() || saveFolder.isFile()) {
+        saveFolder.mkdir();
+      }
+
+      for (MultipartFile file : fileMap.values()) {
+
+        LOGGER.info("file============" + file.getName());
+
+        if (!file.getOriginalFilename().equals("") || !file.getOriginalFilename().isEmpty()) {
+          int maxSize = 1000 * 1024 * 1024; // 10MB
+          long fileSize = file.getSize();
+
+          LOGGER.info("maxSize=====" + maxSize);
+          LOGGER.info("fileSize=====" + fileSize);
+
+          if (fileSize > maxSize) {
+            LOGGER.info("fileSize > maxSize==================");
+            throw new Exception("error");
+          }
+
+          try {
+
+            String fileName = formatedNow + "_" + file.getName();
+
+            String originFileName = file.getOriginalFilename();
+            int index = originFileName.lastIndexOf(".");
+            String extension = originFileName.substring(index + 1);
+
+            fileName = fileName + "." + extension;
+            filePath = uploadPath + fileName;
+
+            LOGGER.info("filetype============" + extension);
+            LOGGER.info("filename============" + fileName);
+            LOGGER.info("filetype============" + extension);
+            LOGGER.info("filePath============" + filePath);
+
+            file.transferTo(new File(uploadPath + fileName));
+
+
+
+            HashMap<String, Object> paramMap2 = new HashMap<String, Object>();
+            paramMap2.put("user_id", uservo.getUser_id());
+            paramMap2.put("filename", fileName);
+            paramMap2.put("filetype", extension);
+            paramMap2.put("fileurl", "http://localhost:8080/Egov_WEB/boardView/image.do?file=" + fileName);
+            paramMap2.put("status", 0);
+            paramMap2.put("boardid", boardid);
+
+            egovBoardMapper.saveFile(paramMap2);
+
+          } catch (Exception e) {
+            // TODO: handle exception
+            e.printStackTrace();
+            LOGGER.info("e.getMessage()============" + e.getMessage());
+          }
+
+        }
+      }
+    }
   }
 
 
@@ -115,8 +211,7 @@ public class EgovBoardServiceImpl extends EgovAbstractServiceImpl implements Ego
 
     HashMap<String, Object> paramMap = new HashMap<String, Object>();
 
-    paramMap.put("pi_offset",
-        (paginationInfo.getCurrentPageNo() - 1) * paginationInfo.getRecordCountPerPage());
+    paramMap.put("pi_offset", (paginationInfo.getCurrentPageNo() - 1) * paginationInfo.getRecordCountPerPage());
     paramMap.put("pi_recordCountPage", paginationInfo.getRecordCountPerPage());
     paramMap.put("out_listcount", 0);
     paramMap.put("status", 0);
@@ -159,6 +254,45 @@ public class EgovBoardServiceImpl extends EgovAbstractServiceImpl implements Ego
     return boardid;
   }
 
+
+
+  @Override
+  public void saveReply(HttpServletRequest request) throws Exception {
+    // TODO Auto-generated method stub
+
+    UserVO uservo = (UserVO) request.getSession().getAttribute("uservo");
+
+    if (uservo.getUser_id() == null) {
+      throw new Exception("no login");
+    }
+
+
+    String title = request.getParameter("title");
+    String content = request.getParameter("content");
+    String origin_boardid = request.getParameter("origin_boardid");
+
+    if (!Validation_Form.validNum(origin_boardid) || content.length() > 100000) {
+      throw new Exception("error");
+    }
+
+    HashMap<String, Object> paramMap = new HashMap<String, Object>();
+    paramMap.put("title", title);
+    paramMap.put("content", content);
+    paramMap.put("origin_boardid", Integer.parseInt(origin_boardid));
+    paramMap.put("user_id", uservo.getUser_id());
+    paramMap.put("status", 0);
+
+    egovBoardMapper.boardsaveReply(paramMap);
+
+    LOGGER.info("status=" + paramMap.get("status").toString());
+
+    if (Integer.parseInt(paramMap.get("status").toString()) != 1) {
+      throw new Exception("error");
+    }
+
+
+
+  }
 
 }
 

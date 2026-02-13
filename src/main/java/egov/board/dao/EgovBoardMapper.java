@@ -13,5 +13,9 @@ public interface EgovBoardMapper {
 
   public List<HashMap<String, Object>> showBaord(HashMap<String, Object> paramMap) throws Exception;
 
+  public void boardsaveReply(HashMap<String, Object> paramMap) throws Exception;
+
+  public void saveFile(HashMap<String, Object> paramMap) throws Exception;;
+
 
 }

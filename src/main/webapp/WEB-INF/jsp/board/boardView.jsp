@@ -65,6 +65,14 @@
 			<td><textarea class="td2 mytextarea" name="mytextarea" readonly>${boardcontents}</textarea></td>
 		</tr>
 		<tr>
+            <td class="td1">이미지</td>
+            <td><img src="${list[0].fileurl}"></td>
+        </tr>
+        <tr>
+            <td class="td1">다운로드</td>
+            <td><a href="${list[0].fileurl}">파일 다운로드</a></td>
+        </tr>
+		<tr>
 			<td colspan="2" class="td4">
 				<!-- javascript로 사용자에게 안보여지게 처리필요. --> <a
 				href="boardEdit.do?boardid=${board}" id="editbtn"><input
