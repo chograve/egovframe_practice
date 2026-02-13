@@ -17,7 +17,9 @@ public interface EgovBoardService {
 
   public String checkReply(HttpServletRequest request) throws Exception;
 
-  public void saveReply(HttpServletRequest request) throws Exception;;
+  public void saveReply(HttpServletRequest request) throws Exception;
+
+  public HashMap<String, Object> loadFile(HttpServletRequest request) throws Exception;
 
 
 

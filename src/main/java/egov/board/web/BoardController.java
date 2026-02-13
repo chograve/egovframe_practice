@@ -8,6 +8,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -172,6 +176,32 @@ public class BoardController {
       }
     }
     return "redirect:/boardList.do";
+  }
+
+  @RequestMapping(value = "/Egov_WEB/boardView/image.do")
+  public ResponseEntity<byte[]> imageView(HttpServletRequest request, ModelMap model) {
+    LOGGER.info("/Egov_WEB/boardView/image.do");
+
+    HashMap<String, Object> resultMap = new HashMap<String, Object>();
+    ResponseEntity<byte[]> entity = null;
+
+    try {
+      request.setCharacterEncoding("UTF-8");
+      resultMap = egovBoardService.loadFile(request);
+      HttpHeaders httpHeaders = new HttpHeaders();
+
+      LOGGER.info("resultMap.get(\"filename\").toString()====" + resultMap.get("filename").toString());
+
+      httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+      httpHeaders.add("Content-Disposition", "attachment; filename=\""
+          + new String(resultMap.get("filename").toString().getBytes("UTF-8"), "ISO-8859-1") + "\"");
+      entity = new ResponseEntity<byte[]>((byte[]) resultMap.get("bytedata"), httpHeaders, HttpStatus.OK);
+
+    } catch (Exception e) {
+      entity = new ResponseEntity<byte[]>(HttpStatus.BAD_REQUEST);
+
+    }
+    return entity;
   }
 
 }

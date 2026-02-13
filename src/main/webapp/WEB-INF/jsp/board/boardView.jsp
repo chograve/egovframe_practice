@@ -53,24 +53,24 @@
 	<table class="mytable">
 		<tr>
 			<td class="td1">작성자</td>
-			<td class="td2">${userid}</td>
+			<td class="td2">${list[0].userid}</td>
 		</tr>
 		<tr>
 			<td class="td1">제목</td>
 			<td><input type="text" class="td2" name="title" readonly
-				value="${title}"></td>
+				value="${list[0].title}"></td>
 		</tr>
 		<tr>
 			<td class="td1 td3">내용</td>
-			<td><textarea class="td2 mytextarea" name="mytextarea" readonly>${boardcontents}</textarea></td>
+			<td><textarea class="td2 mytextarea" name="mytextarea" readonly>${list[0].boardcontents}</textarea></td>
 		</tr>
 		<tr>
-            <td class="td1">이미지</td>
-            <td><img src="${list[0].fileurl}"></td>
+            <td class="td1">이미지</td>            
+            <td><img src="${list[0].b_fileurl}" style="width: 20%; height:20%"></td>
         </tr>
         <tr>
             <td class="td1">다운로드</td>
-            <td><a href="${list[0].fileurl}">파일 다운로드</a></td>
+            <td><a href="${list[0].b_fileurl}">파일 다운로드</a></td>
         </tr>
 		<tr>
 			<td colspan="2" class="td4">

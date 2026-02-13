@@ -1,6 +1,8 @@
 package egov.board.service.impl;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -10,6 +12,7 @@ import java.util.Map;
 import java.util.Properties;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.io.IOUtils;
 import org.egovframe.rte.fdl.cmmn.EgovAbstractServiceImpl;
 import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 import org.slf4j.Logger;
@@ -290,8 +293,41 @@ public class EgovBoardServiceImpl extends EgovAbstractServiceImpl implements Ego
       throw new Exception("error");
     }
 
+  }
 
 
+
+  @Override
+  public HashMap<String, Object> loadFile(HttpServletRequest request) throws Exception {
+    // TODO Auto-generated method stub
+    String filename = request.getParameter("file").toString();
+
+    LOGGER.info("filename============" + filename);
+
+    String uploadPath = properties.getProperty("file.imagePath");
+
+    LOGGER.info("uploadPath============" + uploadPath);
+
+    InputStream in = null;
+    byte[] byteArray = null;
+
+    try {
+
+      in = new FileInputStream(uploadPath + filename);
+      byteArray = IOUtils.toByteArray(in);
+
+    } catch (Exception e) {
+      // TODO: handle exception
+      e.printStackTrace();
+    } finally {
+      in.close();
+    }
+
+    HashMap<String, Object> resultMap = new HashMap<String, Object>();
+    resultMap.put("bytedata", byteArray);
+    resultMap.put("filename", filename);
+
+    return resultMap;
   }
 
 }
